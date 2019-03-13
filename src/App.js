@@ -20,6 +20,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import CollectionsIcon from '@material-ui/icons/Collections';
 import ScoreIcon from '@material-ui/icons/Score';
 import Collection from './Collection';
+import Sessions from './Sessions';
+import Settings from './Settings';
 
 const drawerWidth = 240;
 
@@ -56,11 +58,33 @@ const styles = theme => ({
 });
 
 class App extends Component {
+    screens = {
+        main: [
+            {
+                title: 'Collection',
+                icon: <CollectionsIcon />,
+                content: <Collection />
+            },
+            {
+                title: 'Sessions',
+                icon: <ScoreIcon />,
+                content: <Sessions />
+            }
+        ],
+        other: [
+            {
+                title: 'Settings',
+                icon: <SettingsIcon />,
+                content: <Settings />
+            }
+        ]
+    };
+
     constructor(props) {
         super(props);
         this.state = {
             mobileOpen: false,
-            activeScreen: 'Collection'
+            activeScreen: this.screens.main[0]
         };
     }
 
@@ -68,16 +92,8 @@ class App extends Component {
         this.setState(state => ({ mobileOpen: !state.mobileOpen }));
     };
 
-    onScreenSelected = screen => {
-        switch (screen) {
-            case 'Collection': {
-                this.setState(state => ({ activeScreen: screen }));
-                break;
-            }
-            default: {
-                this.setState(state => ({ activeScreen: 'Collection' }));
-            }
-        }
+    onScreenSelected = (screen = this.screens[0]) => {
+        this.setState(state => ({ activeScreen: screen }));
     };
 
     render() {
@@ -88,31 +104,27 @@ class App extends Component {
                 <div className={classes.toolbar} />
                 <Divider />
                 <List>
-                    {['Collection', 'Plays'].map((text, index) => (
+                    {this.screens.main.map((screen, index) => (
                         <ListItem
                             button
-                            key={text}
-                            onClick={() => this.onScreenSelected(text)}
+                            key={screen.title}
+                            onClick={() => this.onScreenSelected(screen)}
                         >
-                            <ListItemIcon>
-                                {index % 2 === 0 ? (
-                                    <CollectionsIcon />
-                                ) : (
-                                    <ScoreIcon />
-                                )}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
+                            <ListItemIcon>{screen.icon}</ListItemIcon>
+                            <ListItemText primary={screen.title} />
                         </ListItem>
                     ))}
                 </List>
                 <Divider />
                 <List>
-                    {['Settings'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <SettingsIcon /> : null}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
+                    {this.screens.other.map((screen, index) => (
+                        <ListItem
+                            button
+                            key={screen.title}
+                            onClick={() => this.onScreenSelected(screen)}
+                        >
+                            <ListItemIcon>{screen.icon}</ListItemIcon>
+                            <ListItemText primary={screen.title} />
                         </ListItem>
                     ))}
                 </List>
@@ -133,7 +145,7 @@ class App extends Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" color="inherit" noWrap>
-                            {this.state.activeScreen}
+                            {this.state.activeScreen.title}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -169,16 +181,7 @@ class App extends Component {
                 </nav>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    {(() => {
-                        switch (this.state.activeScreen) {
-                            case 'Collection': {
-                                return <Collection />;
-                            }
-                            default: {
-                                return <Collection />;
-                            }
-                        }
-                    })()}
+                    {this.state.activeScreen.content}
                 </main>
             </div>
         );
