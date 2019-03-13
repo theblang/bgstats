@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {
     AppBar,
@@ -57,9 +56,13 @@ const styles = theme => ({
 });
 
 class App extends Component {
-    state = {
-        mobileOpen: false
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            mobileOpen: false,
+            activeScreen: 'Collection'
+        };
+    }
 
     handleDrawerToggle = () => {
         this.setState(state => ({ mobileOpen: !state.mobileOpen }));
