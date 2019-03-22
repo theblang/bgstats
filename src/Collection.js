@@ -5,9 +5,12 @@ import {
     TextField,
     ListItem,
     ListItemText,
-    List
+    List,
+    ListItemSecondaryAction,
+    IconButton
 } from '@material-ui/core';
 import localforage from 'localforage';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 class Collection extends Component {
     constructor(props) {
@@ -29,6 +32,24 @@ class Collection extends Component {
                 .catch(err => {
                     console.error(err);
                 });
+        }
+    }
+
+    removeGame(game) {
+        if (game && game.name) {
+            const index = this.state.games.map(g => g.name).indexOf(game.name);
+            if (index > -1) {
+                const games = Object.assign([], this.state.games);
+                games.splice(index, 1);
+                localforage
+                    .setItem('games', games)
+                    .then(() => {
+                        this.setState({ games });
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    });
+            }
         }
     }
 
@@ -58,6 +79,13 @@ class Collection extends Component {
                         return (
                             <ListItem button key={i}>
                                 <ListItemText inset primary={game.name} />
+                                <ListItemSecondaryAction
+                                    onClick={() => this.removeGame(game)}
+                                >
+                                    <IconButton aria-label="Delete">
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </ListItemSecondaryAction>
                             </ListItem>
                         );
                     })}
