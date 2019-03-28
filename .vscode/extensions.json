@@ -6,6 +6,7 @@
     "recommendations": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
+        "eamodio.gitlens",
         "msjsdiag.debugger-for-chrome"
     ],
     // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
