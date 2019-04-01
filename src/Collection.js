@@ -19,7 +19,7 @@ async function queryGames() {
     } catch (e) {
         console.error('Error querying games');
     }
-    return games;
+    return games || [];
 }
 
 async function storeGames(games) {
