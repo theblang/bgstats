@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Typography,
     Button,
@@ -11,16 +11,6 @@ import {
 } from '@material-ui/core';
 import localforage from 'localforage';
 import DeleteIcon from '@material-ui/icons/Delete';
-
-async function queryGames() {
-    let games;
-    try {
-        games = await localforage.getItem('games');
-    } catch (e) {
-        console.error('Error querying games');
-    }
-    return games || [];
-}
 
 async function storeGames(games) {
     try {
@@ -35,9 +25,19 @@ export default function Collection() {
     const [games, setGames] = useState([]);
     const [newGameName, setNewGameName] = useState('');
 
-    queryGames().then(games => {
-        setGames(games);
-    });
+    useEffect(() => {
+        async function loadGames() {
+            let games;
+            try {
+                games = await localforage.getItem('games');
+                setGames(games || []);
+            } catch (e) {
+                console.error('Error querying games');
+            }
+            return games || [];
+        }
+        loadGames();
+    }, []);
 
     return (
         <div>
