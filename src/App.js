@@ -25,6 +25,7 @@ import Sessions from './Sessions';
 import Settings from './Settings';
 import Dashboard from './Dashboard';
 import Title from './Title';
+import GameDetails from './GameDetails';
 
 const drawerWidth = 240;
 
@@ -166,6 +167,7 @@ class App extends Component {
                         <Route path="/collection" component={Collection} />
                         <Route path="/sessions" component={Sessions} />
                         <Route path="/settings" component={Settings} />
+                        <Route path="/game/:id" component={GameDetails} />
                     </main>
                 </div>
             </Router>

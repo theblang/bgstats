@@ -11,19 +11,42 @@ import {
 } from '@material-ui/core';
 import localforage from 'localforage';
 import DeleteIcon from '@material-ui/icons/Delete';
+import uuidv4 from 'uuid/v4';
+import { Link } from 'react-router-dom';
 
-async function storeGames(games) {
-    try {
-        await localforage.setItem('games', games);
-    } catch (e) {
-        console.err('Error storing games');
-    }
-    return games;
-}
-
-export default function Collection() {
+export default function Collection({ match }) {
     const [games, setGames] = useState([]);
     const [newGameName, setNewGameName] = useState('');
+
+    async function storeGames(games) {
+        try {
+            await localforage.setItem('games', games);
+        } catch (e) {
+            console.err('Error storing games');
+        }
+        return games;
+    }
+
+    async function addGame(name) {
+        if (!name) {
+            return;
+        }
+        const newGames = await storeGames(
+            games.concat([{ id: uuidv4(), name: name }])
+        );
+        setGames(newGames);
+        setNewGameName('');
+    }
+
+    async function removeGame(game) {
+        const index = games.map(g => g.name).indexOf(game.name);
+        if (index > -1) {
+            const newGames = Object.assign([], games);
+            newGames.splice(index, 1);
+            await storeGames(newGames);
+            setGames(newGames);
+        }
+    }
 
     useEffect(() => {
         async function loadGames() {
@@ -45,23 +68,15 @@ export default function Collection() {
             <List component="nav">
                 {games.map((game, i) => {
                     return (
-                        <ListItem button key={i}>
+                        <ListItem
+                            button
+                            key={i}
+                            component={Link}
+                            to={`game/${game.id}`}
+                        >
                             <ListItemText inset primary={game.name} />
                             <ListItemSecondaryAction
-                                onClick={async () => {
-                                    const index = games
-                                        .map(g => g.name)
-                                        .indexOf(game.name);
-                                    if (index > -1) {
-                                        const newGames = Object.assign(
-                                            [],
-                                            games
-                                        );
-                                        newGames.splice(index, 1);
-                                        await storeGames(newGames);
-                                        setGames(newGames);
-                                    }
-                                }}
+                                onClick={() => removeGame(game)}
                             >
                                 <IconButton aria-label="Delete">
                                     <DeleteIcon />
@@ -81,14 +96,7 @@ export default function Collection() {
                 />
                 <Button
                     variant="contained"
-                    onClick={async () => {
-                        if (!newGameName) {
-                            return;
-                        }
-                        await storeGames(games.concat([{ name: newGameName }]));
-                        setGames(games);
-                        setNewGameName('');
-                    }}
+                    onClick={() => addGame(newGameName)}
                 >
                     Add Game
                 </Button>
