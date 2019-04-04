@@ -10,6 +10,8 @@ class Title extends Component {
                 return 'Collection';
             case '/sessions':
                 return 'Sessions';
+            case '/search':
+                return 'Search';
             case '/settings':
                 return 'Settings';
             default: {

@@ -20,12 +20,14 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CollectionsIcon from '@material-ui/icons/Collections';
 import ScoreIcon from '@material-ui/icons/Score';
+import SearchIcon from '@material-ui/icons/Search';
 import Collection from './Collection';
 import Sessions from './Sessions';
 import Settings from './Settings';
 import Dashboard from './Dashboard';
 import Title from './Title';
 import GameDetails from './GameDetails';
+import Search from './Search';
 
 const drawerWidth = 240;
 
@@ -97,6 +99,14 @@ class App extends Component {
                             <ListItemText primary="Sessions" />
                         </ListItem>
                     </Link>
+                    <Link to="/search" style={{ textDecoration: 'none' }}>
+                        <ListItem button>
+                            <ListItemIcon>
+                                <SearchIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Search" />
+                        </ListItem>
+                    </Link>
                 </List>
                 <Divider />
                 <List>
@@ -166,6 +176,7 @@ class App extends Component {
                         <Route exact path="/" component={Dashboard} />
                         <Route path="/collection" component={Collection} />
                         <Route path="/sessions" component={Sessions} />
+                        <Route path="/search" component={Search} />
                         <Route path="/settings" component={Settings} />
                         <Route path="/game/:id" component={GameDetails} />
                     </main>
