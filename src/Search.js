@@ -11,21 +11,24 @@ import {
 import localforage from 'localforage';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import CloseIcon from '@material-ui/icons/Close';
+import uuidv3 from 'uuid/v3';
+import uuidNamespaces from './uuidNamespaces';
+import { Link } from 'react-router-dom';
 // import xmljs from 'xml-js';
 
-const useBGGSearch = searchString => {
+const useBggSearch = searchString => {
     const [results, setResults] = useState([]);
 
     // See https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc1
-    // See https://boardgamegeek.com/xmlapi2/thing?id=68448
-    const searchURL = new URL('https://boardgamegeek.com/xmlapi2/search');
-    searchURL.search = new URLSearchParams({
+    // See https://boardgamegeek.com/xmlapi2/search?query=7+wonders
+    const searchUrl = new URL('https://boardgamegeek.com/xmlapi2/search');
+    searchUrl.search = new URLSearchParams({
         query: searchString
     });
 
     useEffect(() => {
         // This works, but let's just read from a real search stored in a test file for now to minimize requests to BGG
-        // fetch(searchURL)
+        // fetch(searchUrl)
         //     .then(response => {
         //         return response.text();
         //     })
@@ -48,23 +51,27 @@ const useBGGSearch = searchString => {
         //         setResults(games);
         //     });
 
-        fetch('/7wonderssearch.json')
-            .then(response => {
-                return response.json();
-            })
-            .then(games => {
-                setResults(games);
-            });
+        async function searchGames() {
+            const response = await fetch('/7wonderssearch.json');
+            const jsonResponse = await response.json();
+            const games = jsonResponse.map(gameJson =>
+                Object.assign(gameJson, {
+                    id: uuidv3(gameJson.name, uuidNamespaces.bgg)
+                })
+            );
+            setResults(games);
+        }
+        searchGames();
     }, []);
 
     return results;
 };
 
 export default function Search() {
-    const games = useBGGSearch('7 Wonders');
+    const games = useBggSearch('7 Wonders');
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-    async function addBGGGame(game) {
+    async function addBggGame(game) {
         if (!game) {
             return;
         }
@@ -91,13 +98,19 @@ export default function Search() {
             <List component="nav">
                 {games.map((game, i) => {
                     return (
-                        <ListItem alignItems="flex-start" key={i}>
+                        <ListItem
+                            alignItems="flex-start"
+                            button
+                            key={i}
+                            component={Link}
+                            to={`game/${game.id}`}
+                        >
                             <ListItemText
                                 primary={game.name}
                                 secondary={game.yearpublished}
                             />
                             <ListItemSecondaryAction
-                                onClick={() => addBGGGame(game)}
+                                onClick={() => addBggGame(game)}
                             >
                                 <IconButton aria-label="Delete">
                                     <NoteAddIcon />

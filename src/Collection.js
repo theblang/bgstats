@@ -11,7 +11,8 @@ import {
 } from '@material-ui/core';
 import localforage from 'localforage';
 import DeleteIcon from '@material-ui/icons/Delete';
-import uuidv4 from 'uuid/v4';
+import uuidv3 from 'uuid/v3';
+import uuidNamespaces from './uuidNamespaces';
 import { Link } from 'react-router-dom';
 
 export default function Collection({ match }) {
@@ -32,7 +33,9 @@ export default function Collection({ match }) {
             return;
         }
         const newGames = await storeGames(
-            games.concat([{ id: uuidv4(), name: name }])
+            games.concat([
+                { id: uuidv3(name, uuidNamespaces.manual), name: name }
+            ])
         );
         setGames(newGames);
         setNewGameName('');
