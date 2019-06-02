@@ -10,20 +10,21 @@ export default function GameDetails({ match }) {
     const id = match.params.id;
     const [gameDetails, setGameDetails] = useState({});
 
-    useEffect(() => {
-        async function loadGameDetails() {
-            let games;
-            try {
-                games = await localforage.getItem('games');
+    // FIXME
+    // useEffect(() => {
+    //     async function loadGameDetails() {
+    //         let games;
+    //         try {
+    //             games = await localforage.getItem('games');
 
-                setGames(games || []);
-            } catch (e) {
-                console.error('Error querying games');
-            }
-            return games || [];
-        }
-        loadGames();
-    }, []);
+    //             setGames(games || []);
+    //         } catch (e) {
+    //             console.error('Error querying games');
+    //         }
+    //         return games || [];
+    //     }
+    //     loadGames();
+    // }, []);
 
     async function syncDetailsFromBgg() {
         // See https://boardgamegeek.com/wiki/page/BGG_XML_API2#toc1
